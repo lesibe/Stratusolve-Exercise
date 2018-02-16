@@ -83,20 +83,42 @@
             modal.find('.modal-title').text('Task details');
             $('#deleteTask').show();
             currentTaskId = triggerElement.attr("id");
+			
             console.log('Task ID: '+triggerElement.attr("id"));
+			var task_heading 	= $("#"+currentTaskId+" .list-group-item-heading").html();
+			var task_text 		= $("#"+currentTaskId+" .list-group-item-text").html();
+			
+			$('#InputTaskName').val(task_heading);
+			$('#InputTaskDescription').val(task_text);
+			
         }
     });
     $('#saveTask').click(function() {
         //Assignment: Implement this functionality
-        alert('Save... Id:'+currentTaskId);
-        $('#myModal').modal('hide');
-        updateTaskList();
+
+		var InputTaskName			= $('#InputTaskName').val();
+		var InputTaskDescription	= $('#InputTaskDescription').val();
+
+		$.post( "update_task.php","currentTaskId="+parseInt(currentTaskId)+"&InputTaskName="+InputTaskName+"&InputTaskDescription="+InputTaskDescription+"&action=save", function( data ) {
+			$('#InputTaskName').val("");
+			$('#InputTaskDescription').val("");				
+			$('#myModal').modal('hide');
+			updateTaskList();
+		});
+        
+		
     });
     $('#deleteTask').click(function() {
         //Assignment: Implement this functionality
-        alert('Delete... Id:'+currentTaskId);
-        $('#myModal').modal('hide');
-        updateTaskList();
+
+
+		$.post( "update_task.php","currentTaskId="+currentTaskId+"&action=delete", function( data ) {
+			if(data == ""){}
+			else{alert("Failed!!"+data);}
+			$('#myModal').modal('hide');
+		});
+        		
+
     });
     function updateTaskList() {
         $.post("list_tasks.php", function( data ) {
